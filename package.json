@@ -1,6 +1,6 @@
 {
     "name": "@voltstack/vpm",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "VoltCloud plugin registry CLI",
     "license": "MIT",
     "type": "module",

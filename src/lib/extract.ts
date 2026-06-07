@@ -41,18 +41,47 @@ const extractZip = async (archive: string, target: string): Promise<void> => {
     }
 };
 
+const sniffFormat = (archive: string): 'zst' | 'gz' | 'zip' | null => {
+    const buf = Buffer.alloc(4);
+    const fd = fs.openSync(archive, 'r');
+    try {
+        fs.readSync(fd, buf, 0, 4, 0);
+    } finally {
+        fs.closeSync(fd);
+    }
+    if (buf[0] === 0x28 && buf[1] === 0xb5 && buf[2] === 0x2f && buf[3] === 0xfd) {
+        return 'zst';
+    }
+    if (buf[0] === 0x1f && buf[1] === 0x8b) {
+        return 'gz';
+    }
+    if (buf[0] === 0x50 && buf[1] === 0x4b) {
+        return 'zip';
+    }
+    return null;
+};
+
 export const extractArchive = async (archive: string, target: string): Promise<void> => {
-    const lower = archive.toLowerCase();
     logger.debug(`extracting ${archive} -> ${target}`);
-    if (lower.endsWith('.tar.zst')) {
+    const lower = archive.toLowerCase();
+    const format =
+        sniffFormat(archive) ??
+        (lower.endsWith('.tar.zst')
+            ? 'zst'
+            : lower.endsWith('.tar.gz') || lower.endsWith('.tgz')
+              ? 'gz'
+              : lower.endsWith('.zip')
+                ? 'zip'
+                : null);
+    if (format === 'zst') {
         await extractTarZst(archive, target);
         return;
     }
-    if (lower.endsWith('.tar.gz') || lower.endsWith('.tgz')) {
+    if (format === 'gz') {
         await extractTarGzip(archive, target);
         return;
     }
-    if (lower.endsWith('.zip')) {
+    if (format === 'zip') {
         await extractZip(archive, target);
         return;
     }

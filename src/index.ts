@@ -23,7 +23,7 @@ const buildProgram = (): Command => {
     program
         .name('vpm')
         .description('VoltCloud plugin registry CLI')
-        .version('1.0.1', '-v, --version', 'output the current version')
+        .version('1.0.2', '-v, --version', 'output the current version')
         .option('--registry <url>', 'override the registry URL')
         .option('--console <url>', 'override the console URL')
         .option('--verbose', 'enable verbose logging')
