@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Build output — the esbuild bundle is rebuilt on prepublishOnly, so it is
+# gitignored but still shipped to npm via package.json "files". bin/vpm.js is a
+# committed launcher and is NOT ignored.
+dist/
+build/
+*.tsbuildinfo
+
+# npm pack / publish artifacts
+*.tgz
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local environment / credentials
+.env
+.env.local
+.env.*.local
+
+# Editor / OS cruft
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Test coverage
+coverage/
