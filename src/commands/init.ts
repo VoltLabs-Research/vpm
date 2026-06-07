@@ -20,7 +20,7 @@ export const register = (program: Command): void => {
             description?: string;
         }) => {
             if (!opts.name) {
-                logger.error('--name is required (e.g. --name=@voltlabs/my-plugin)');
+                logger.error('--name is required (e.g. --name=@voltstack/my-plugin)');
                 process.exitCode = 1;
                 return;
             }

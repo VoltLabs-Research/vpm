@@ -1,11 +1,11 @@
 {
-    "name": "@voltlabs/vpm",
-    "version": "0.1.0",
+    "name": "@voltstack/vpm",
+    "version": "1.0.0",
     "description": "VoltCloud plugin registry CLI",
     "license": "MIT",
     "type": "module",
     "bin": {
-        "vpm": "./bin/vpm.js"
+        "vpm": "bin/vpm.js"
     },
     "files": [
         "bin",
