@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const EnvSchema = z.object({
     VPM_REGISTRY: z.string().url().default('https://registry.voltcloud.dev'),
-    VPM_CONSOLE: z.string().url().default('https://console.voltcloud.dev'),
+    VPM_CONSOLE: z.string().url().default('https://server.console.voltcloud.dev'),
     VOLT_CACHE_DIR: z.string().optional(),
     VPM_NO_KEYRING: z
         .string()
