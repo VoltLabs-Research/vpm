@@ -79,11 +79,9 @@ export const register = (program: Command): void => {
         .alias('i')
         .description('Download and extract a plugin into the shared Volt cache')
         .argument('<pkg>', '@username/name[@version|@tag|@range]')
-        .option('--global', 'install globally (default; reserved for compatibility)')
         .option('--platform <tag>', 'override platform tag (e.g. linux-x86_64)')
         .option('--force', 'reinstall even if the target version is already present')
-        .action(async (pkg: string, opts: { global?: boolean; platform?: string; force?: boolean }) => {
-            void opts.global;
+        .action(async (pkg: string, opts: { platform?: string; force?: boolean }) => {
             const { ref, version: spec } = splitVersionSpec(pkg);
             const key = resolveKey(ref);
             const platform = opts.platform ?? currentPlatformTag();

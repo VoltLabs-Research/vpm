@@ -71,12 +71,9 @@ export const register = (program: Command): void => {
                 const manifest = loadManifest(manifestFile);
                 const baseDir = path.dirname(manifestFile);
 
-                const nameMatch = /^@([a-z0-9][a-z0-9-]*)\/([a-z0-9][a-z0-9._-]*)$/.exec(manifest.name);
-                if (!nameMatch) {
-                    logger.error(`Manifest name '${manifest.name}' is not in '@username/name' form`);
-                    process.exitCode = 1;
-                    return;
-                }
+                // loadManifest already validated name against the same @username/name
+                // regex via VpmManifestSchema, so this exec only extracts the captures.
+                const nameMatch = /^@([a-z0-9][a-z0-9-]*)\/([a-z0-9][a-z0-9._-]*)$/.exec(manifest.name)!;
                 const username = nameMatch[1];
                 const name = nameMatch[2];
 

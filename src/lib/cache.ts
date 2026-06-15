@@ -20,8 +20,6 @@ export const downloadsDir = (): string => path.join(rootCacheDir(), 'downloads')
 
 export const manifestsDir = (): string => path.join(rootCacheDir(), 'manifests');
 
-export const configPath = (): string => path.join(rootCacheDir(), 'config.json');
-
 export const installDir = (
     publisher: string,
     key: string,
@@ -54,17 +52,6 @@ export const readJson = <T>(file: string): T | undefined => {
 
 export const removeRecursive = (target: string): void => {
     fs.rmSync(target, { recursive: true, force: true });
-};
-
-export const listInstalledPublishers = (): string[] => {
-    const dir = pluginsDir();
-    if (!fs.existsSync(dir)) {
-        return [];
-    }
-    return fs
-        .readdirSync(dir, { withFileTypes: true })
-        .filter((entry) => entry.isDirectory())
-        .map((entry) => entry.name);
 };
 
 export interface InstalledRecord {

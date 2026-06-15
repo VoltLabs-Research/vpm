@@ -6,8 +6,6 @@ export const setVerbose = (value: boolean): void => {
     verbose = value;
 };
 
-export const isVerbose = (): boolean => verbose;
-
 export const logger = {
     info: (msg: string): void => {
         process.stdout.write(`${msg}\n`);

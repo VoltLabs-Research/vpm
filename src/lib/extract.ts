@@ -28,12 +28,6 @@ const extractTarZst = async (archive: string, target: string): Promise<void> => 
 
 const extractZip = async (archive: string, target: string): Promise<void> => {
     fs.mkdirSync(target, { recursive: true });
-    try {
-        const mod = (await import('node:zlib')) as unknown as Record<string, unknown>;
-        void mod;
-    } catch {
-        // node:zlib always available; this guard is for type narrowing only
-    }
     const { spawnSync } = await import('node:child_process');
     const result = spawnSync('unzip', ['-q', '-o', archive, '-d', target]);
     if (result.error || result.status !== 0) {
