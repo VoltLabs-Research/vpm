@@ -4,12 +4,12 @@ import * as path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { z } from 'zod';
 
-export const INTERFACE_VERSION = 2;
-export const DESCRIPTOR_VERSION = 1;
+const INTERFACE_VERSION = 2;
+const DESCRIPTOR_VERSION = 1;
 
 const OPTION_TYPES = ['bool', 'int', 'float', 'string', 'enum', 'path', 'path-list'] as const;
 
-export const DescriptorOptionSchema = z.object({
+const DescriptorOptionSchema = z.object({
     flag: z.string().regex(/^--[A-Za-z0-9][A-Za-z0-9_-]*$/, 'flag must look like --name'),
     type: z.enum(OPTION_TYPES),
     help: z.string().optional(),
@@ -18,7 +18,7 @@ export const DescriptorOptionSchema = z.object({
     bundleDefault: z.string().optional()
 });
 
-export const DescriptorSchema = z.object({
+const DescriptorSchema = z.object({
     descriptor: z.literal(DESCRIPTOR_VERSION),
     name: z.string(),
     description: z.string().optional(),
@@ -28,7 +28,7 @@ export const DescriptorSchema = z.object({
     options: z.array(DescriptorOptionSchema)
 });
 
-export const RequirementSchema = z.object({
+const RequirementSchema = z.object({
     id: z.string().min(1),
     capability: z.string().min(1),
     bind: z.record(z.string().regex(/^--[A-Za-z0-9][A-Za-z0-9_-]*$/)).default({}),
@@ -36,7 +36,7 @@ export const RequirementSchema = z.object({
     multiple: z.boolean().default(false)
 });
 
-export const PluginInterfaceSchema = z.object({
+const PluginInterfaceSchema = z.object({
     version: z.literal(INTERFACE_VERSION),
     input: z.object({ from: z.string(), port: z.string() }).nullish(),
     requires: z.array(RequirementSchema).optional(),
@@ -51,9 +51,9 @@ export const PluginInterfaceSchema = z.object({
         .optional()
 });
 
-export type DescriptorOption = z.infer<typeof DescriptorOptionSchema>;
-export type Descriptor = z.infer<typeof DescriptorSchema>;
-export type PluginInterface = z.infer<typeof PluginInterfaceSchema>;
+type DescriptorOption = z.infer<typeof DescriptorOptionSchema>;
+type Descriptor = z.infer<typeof DescriptorSchema>;
+type PluginInterface = z.infer<typeof PluginInterfaceSchema>;
 
 const canonicalJson = (value: unknown): string => {
     if (value === null || value === undefined) {
@@ -115,10 +115,10 @@ const asciiJsonString = (value: string): string => {
     return `${out}"`;
 };
 
-export const paramsChecksum = (options: DescriptorOption[]): string =>
+const paramsChecksum = (options: DescriptorOption[]): string =>
     `sha256:${crypto.createHash('sha256').update(canonicalJson(options), 'utf8').digest('hex')}`;
 
-export const resolveEntrypoint = (bundleDir: string, pluginName: string): string[] => {
+const resolveEntrypoint = (bundleDir: string, pluginName: string): string[] => {
     const pick = (dir: string, preferNamed: boolean): string | undefined => {
         if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
             return undefined;
@@ -159,7 +159,7 @@ export const resolveEntrypoint = (bundleDir: string, pluginName: string): string
     throw new Error(`No entrypoint found under ${bundleDir}/bin or ${bundleDir}/scripts`);
 };
 
-export const describePlugin = (bundleDir: string, pluginName: string): Descriptor => {
+const describePlugin = (bundleDir: string, pluginName: string): Descriptor => {
     const command = resolveEntrypoint(bundleDir, pluginName);
     const args = [...command.slice(1), '--describe'];
 
@@ -213,7 +213,7 @@ export const describePlugin = (bundleDir: string, pluginName: string): Descripto
     return parsed.data;
 };
 
-export const readPluginInterface = (manifestPath: string): { manifest: any; iface: PluginInterface } => {
+const readPluginInterface = (manifestPath: string): { manifest: any; iface: PluginInterface } => {
     if (!fs.existsSync(manifestPath)) {
         throw new Error(`No plugin.json at ${manifestPath}`);
     }
@@ -236,7 +236,7 @@ export const readPluginInterface = (manifestPath: string): { manifest: any; ifac
     return { manifest, iface: parsed.data };
 };
 
-export const validateWiring = (iface: PluginInterface, descriptor: Descriptor): string[] => {
+const validateWiring = (iface: PluginInterface, descriptor: Descriptor): string[] => {
     const problems: string[] = [];
     const flags = new Set(descriptor.options.map((option) => option.flag));
 

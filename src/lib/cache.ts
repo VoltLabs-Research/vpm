@@ -42,14 +42,6 @@ export const writeJson = (file: string, data: unknown): void => {
     fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
 };
 
-export const readJson = <T>(file: string): T | undefined => {
-    if (!fs.existsSync(file)) {
-        return undefined;
-    }
-    const raw = fs.readFileSync(file, 'utf8');
-    return JSON.parse(raw) as T;
-};
-
 export const removeRecursive = (target: string): void => {
     fs.rmSync(target, { recursive: true, force: true });
 };

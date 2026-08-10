@@ -94,13 +94,6 @@ export interface SearchResult {
     total: number;
 }
 
-export interface BundleRef {
-    publisher: string;
-    key: string;
-    version: string;
-    platform: string;
-}
-
 export interface AuthTokens {
     accessToken: string;
     refreshToken: string;

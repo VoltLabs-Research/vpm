@@ -15,5 +15,3 @@ export const currentPlatformTag = (): string => {
         arch;
     return `${sys}-${machine}`;
 };
-
-export const isWindows = (): boolean => os.platform() === 'win32';
