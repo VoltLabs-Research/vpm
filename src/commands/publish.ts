@@ -1,14 +1,35 @@
 import * as fs from 'node:fs';
+import * as os from 'node:os';
 import * as path from 'node:path';
+import * as tar from 'tar';
 import type { Command } from 'commander';
 import kleur from 'kleur';
 import { FormData } from 'undici';
 import { findManifest, loadManifest } from '../lib/manifest.js';
 import { RegistryClient } from '../lib/registry-client.js';
 import { resolveBearer } from '../lib/credentials.js';
+import { verifySealed } from '../lib/interface.js';
 import { logger } from '../lib/logger.js';
 
 const BUNDLE_EXTENSIONS = ['.tgz', '.tar.gz', '.tar.zst'];
+
+const verifyBundleInterface = async (bundlePath: string): Promise<string[]> => {
+    const scratch = fs.mkdtempSync(path.join(os.tmpdir(), 'vpm-verify-'));
+    try {
+        try {
+            await tar.x({ file: bundlePath, cwd: scratch, filter: (entry) => entry.endsWith('plugin.json') });
+        } catch (err) {
+            return [`could not read the bundle: ${(err as Error).message}`];
+        }
+        const manifestPath = path.join(scratch, 'plugin.json');
+        if (!fs.existsSync(manifestPath)) {
+            return ['the bundle contains no plugin.json'];
+        }
+        return verifySealed(manifestPath);
+    } finally {
+        fs.rmSync(scratch, { recursive: true, force: true });
+    }
+};
 
 interface ResolvedBundle {
     tag: string;
@@ -71,8 +92,6 @@ export const register = (program: Command): void => {
                 const manifest = loadManifest(manifestFile);
                 const baseDir = path.dirname(manifestFile);
 
-                // loadManifest already validated name against the same @username/name
-                // regex via VpmManifestSchema, so this exec only extracts the captures.
                 const nameMatch = /^@([a-z0-9][a-z0-9-]*)\/([a-z0-9][a-z0-9._-]*)$/.exec(manifest.name)!;
                 const username = nameMatch[1];
                 const name = nameMatch[2];
@@ -130,6 +149,25 @@ export const register = (program: Command): void => {
                     );
                     process.exitCode = 1;
                     return;
+                }
+
+                if (manifest.kind !== 'lib') {
+                    let rejected = false;
+                    for (const bundle of bundles) {
+                        const problems = await verifyBundleInterface(bundle.path);
+                        if (problems.length === 0) {
+                            continue;
+                        }
+                        rejected = true;
+                        logger.error(`Bundle '${bundle.tag}' is not publishable:`);
+                        for (const problem of problems) {
+                            logger.error(`  - ${problem}`);
+                        }
+                    }
+                    if (rejected) {
+                        process.exitCode = 1;
+                        return;
+                    }
                 }
 
                 let readme: string | undefined;

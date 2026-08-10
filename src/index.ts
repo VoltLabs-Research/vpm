@@ -14,6 +14,7 @@ import * as installCmd from './commands/install.js';
 import * as uninstallCmd from './commands/uninstall.js';
 import * as listCmd from './commands/list.js';
 import * as packCmd from './commands/pack.js';
+import * as sealCmd from './commands/seal.js';
 import * as publishCmd from './commands/publish.js';
 import * as deprecateCmd from './commands/deprecate.js';
 import * as tokenCmd from './commands/token.js';
@@ -50,6 +51,7 @@ const buildProgram = (): Command => {
     uninstallCmd.register(program);
     listCmd.register(program);
     packCmd.register(program);
+    sealCmd.register(program);
     publishCmd.register(program);
     deprecateCmd.register(program);
     tokenCmd.register(program);
