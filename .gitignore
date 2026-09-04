@@ -31,3 +31,9 @@ yarn-error.log*
 # Test coverage
 coverage/
 CLAUDE.md
+# Repowise
+.repowise
+
+# MCP and Claude
+.mcp.json
+.claude
